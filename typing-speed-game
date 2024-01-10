@@ -1,0 +1,83 @@
+import tkinter as tk
+from tkinter import Label, Button
+import random
+
+class TypingSpeedTest:
+    def __init__(self, game):
+        self.game = game
+        game.title('Typing Speed Test!')
+        game.geometry('750x500')
+        
+        self.setup_fonts()
+        self.word_dictionary()
+
+    def setup_fonts(self):
+        helvetica_30_font = ("helvetica", 30)
+        self.game.option_add("*Label.Font", helvetica_30_font)
+        self.game.option_add("*Button.Font", helvetica_30_font)
+
+    def key_press(self, event=None):
+        try:
+            if event.char.lower() == self.not_written.cget('text')[0].lower():
+                self.not_written.configure(text=self.not_written.cget('text')[1:])
+                self.alr_written.configure(text=self.alr_written.cget('text') + event.char.lower())
+        except tk.TclError:
+            pass
+
+    def word_dictionary(self):
+        possible_words = [
+            'The canines would have fitted better in the face of a tiger, and showed at the corners of their wide, thin-lipped mouths, giving them an expression of ferocity. Sleeping in his car was never the plan but sometimes things do not work out as planned. This had been his life for the last three months and he was just beginning to get used to it. He did not actually enjoy it, but he had accepted it and come to terms with it. ',
+            'She did not understand how changed worked. When she looked at today compared to yesterday, there was nothing that she could see that was different. Whatever the odds of it happening, he knew they were big. What he did not know was whether this happening was lucky or unlucky. This allowed the towel to fall halfway into the toilet. I tried to watch a movie, but the remote control was sticky and would not stop scrolling through the channels. I gave up for the night and crawled into bed. ',
+            'There was a time and a place for Stephanie to use her magic. The problem was that she had a difficult time determining this. Green vines attached to the trunk of the tree had wound themselves toward the top of the canopy. Ants used the vine as their private highway, avoiding all the creases and crags of the bark, to freely move at top speed from top to bottom or bottom to top depending on their current chore. ',
+            'It really does not matter what she thinks as it is not her problem to solve. She was trying to insert her opinion where it was not wanted or welcome. Another option you have is choosing the number of syllables in the words you speak. You probably have never considered this option before, but you have it every time you open your mouth and speak. You make so many choices like this that you never even think about, but you have the choice with each one. ',
+            'The towels had been hanging from the rod for years. They were stained and worn, and quite frankly, just plain ugly. Do not be scared. The things out there that are unknown are not scary in themselves. They are just unknown at the moment. Take the time to know them before you list them as scary. Then the world will be a much less scary place for you. The shoes had been there for as long as anyone could remember. In fact, it was difficult for anyone to come up with a date they had first appeared. It had seemed they had always been there and yet they seemed so out of place. ',
+            'He inhaled deeply and looked around at a mess that had been accumulating for over 25 years. He was positive that this was the place he wanted to live. She sat down with her notebook in her hand, her mind wandering to faraway places. She paused and considered all that had happened. It had not gone as expected. When the day began she thought it was going to be a bad one, but as she sat recalling the days events to write them down, she had to admit, it had been a rather marvelous day. ',
+        ]
+        text = random.choice(possible_words)
+        split_point = 0
+
+        self.alr_written = Label(self.game, text=text[0:split_point], fg='green')
+        self.alr_written.place(relx=0.5, rely=0.5, anchor=tk.E)
+
+        self.not_written = Label(self.game, text=text[split_point:])
+        self.not_written.place(relx=0.5, rely=0.5, anchor=tk.W)
+
+        self.timer = Label(self.game, text='0 Seconds', fg='white')
+        self.timer.place(relx=0.5, rely=0.4, anchor=tk.S)
+
+        self.more_words = True
+        self.game.bind('<Key>', self.key_press)
+
+        self.time_passed = 0
+        self.game.after(60000, self.end_game)
+        self.game.after(1000, self.add_time)
+
+    def end_game(self):
+        self.more_words = False
+        amount_words = len(self.alr_written.cget('text').split(' '))
+
+        self.timer.destroy()
+        self.not_written.destroy()
+        self.alr_written.destroy()
+
+        self.result = Label(self.game, text=f'WPM: {amount_words}', fg='white')
+        self.result.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+
+        self.result_button = Button(self.game, text='Retry', command=self.restart)
+        self.result_button.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+
+    def restart(self):
+        self.result.destroy()
+        self.result_button.destroy()
+        self.word_dictionary()
+
+    def add_time(self):
+        self.time_passed += 1
+        self.timer.configure(text=f'{self.time_passed} Seconds')
+        if self.more_words:
+            self.game.after(1000, self.add_time)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = TypingSpeedTest(root)
+    root.mainloop()
