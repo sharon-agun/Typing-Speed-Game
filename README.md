@@ -9,7 +9,7 @@ Make sure you have Python installed on your system. You can download it from [py
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/axxns/typing-game.git
+git clone https://github.com/axxns/typing-speed-game.git
 cd typing-speed-game
 ```
 
